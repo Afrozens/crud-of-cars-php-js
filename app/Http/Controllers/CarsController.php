@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cars;
+use App\Models\User;
 use Illuminate\Http\Request;
-
+use Inertia\Inertia;
 class CarsController extends Controller
 {
     /**
@@ -12,15 +13,9 @@ class CarsController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $cars = auth()->user()->cars()->paginate();
+        // return $cars;
+        return Inertia::render("Cars/index", ["cars"=> $cars]);
     }
 
     /**
@@ -28,23 +23,22 @@ class CarsController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request-> validate([
+            "make" => "required|max:50",
+            "model" => "required|max:100",
+            "color" => "required|max:10",
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cars $cars)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cars $cars)
-    {
-        //
+        $car = Cars::create([
+            "make" => $request->name,
+            "model" => $request->model,
+            "color" => $request-> color,
+            "user_id" => auth()->user()->id
+        ]);
+
+        $car->save();
+        return redirect("cars");
     }
 
     /**
@@ -52,7 +46,19 @@ class CarsController extends Controller
      */
     public function update(Request $request, Cars $cars)
     {
-        //
+        $request-> validate([
+            "make" => "required|max:50",
+            "model" => "required|max:100",
+            "color" => "required|max:10",
+        ]);
+
+        $cars->update([
+            "make" => $request->make,
+            "model" => $request->model,
+            "color" => $request->color,
+        ]);
+
+        return redirect("cars");
     }
 
     /**
@@ -60,6 +66,7 @@ class CarsController extends Controller
      */
     public function destroy(Cars $cars)
     {
-        //
+        $cars->delete();
+        return redirect("cars");
     }
 }
