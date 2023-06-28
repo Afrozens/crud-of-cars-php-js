@@ -13,9 +13,9 @@ class CarsController extends Controller
      */
     public function index()
     {
-        $cars = auth()->user()->cars()->paginate();
+        $cars = auth()->user()->cars;
         // return $cars;
-        return Inertia::render("Cars/index", ["cars"=> $cars]);
+        return Inertia::render("Cars/Index", ["cars"=> $cars]);
     }
 
     /**
@@ -38,6 +38,7 @@ class CarsController extends Controller
         ]);
 
         $car->save();
+        
         return redirect("cars");
     }
 
